@@ -1,0 +1,50 @@
+.body {
+  padding: 4% 15%;
+  .container {
+    background: white;
+    padding: 2%;
+    margin-top: 5%;
+    border-radius: 10px;
+    box-shadow: 0px 3px 10px rgba(173, 173, 173, 0.26);
+    width: fit-content;
+    height: auto;
+    table {
+      border-collapse: collapse;
+    }
+    th {
+      padding: 10px 20px;
+    }
+    th:nth-child(1) {
+      width: 150px;
+    }
+    th:nth-child(3) {
+      width: 150px;
+    }
+    th:nth-child(6) {
+      width: 150px;
+    }
+    th:nth-child(7) {
+      width: 500rem;
+    }
+    td {
+      padding: 10px;
+      text-align: center;
+    }
+
+    tr:nth-child(even) {
+      background: rgba(68, 147, 226, 0.26);
+    }
+    button {
+      width: 70px;
+      height: 40px;
+      background-color: rgb(19, 114, 209);
+      border-radius: 10px;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+    .data {
+      padding: 2ch 0;
+    }
+  }
+}
