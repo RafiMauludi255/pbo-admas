@@ -112,8 +112,6 @@ export default function Dashboard() {
               <p>Loading chart...</p>
             )}
           </div>
-
-         
         </div>
       </div>
     </div>
