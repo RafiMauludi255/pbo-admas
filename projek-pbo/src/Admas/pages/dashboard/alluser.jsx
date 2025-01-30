@@ -10,8 +10,17 @@ export default function Alluser() {
 
   useEffect(() => {
     const fetchUser = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        useNavigate("/");
+      }
+
       try {
-        const response = await axios.get("http://localhost:8001/useradmin");
+        const response = await axios.get("http://localhost:8001/useradmin", {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        });
         setUser(response.data);
       } catch (error) {
         console.log(error);

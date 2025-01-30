@@ -20,11 +20,15 @@ export default function Register() {
   };
 
   const handleRegister = async () => {
-    // e.preventDefault();
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/");
+    }
     try {
       const regist = await axios.post("http://localhost:8001/register", data, {
         headers: {
           "Content-Type": "application/json",
+          Authorization: localStorage.getItem("token"),
         },
       });
       alert("Berhasil membuat akun!");

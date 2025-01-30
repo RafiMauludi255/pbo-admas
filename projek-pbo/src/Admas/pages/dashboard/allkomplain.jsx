@@ -6,6 +6,7 @@ import axios from "axios";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 function Allkomplain() {
   const [data, setData] = useState([]);
@@ -28,8 +29,16 @@ function Allkomplain() {
 
   useEffect(() => {
     const fetchData = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        useNavigate("/")
+      }
       try {
-        const response = await axios.get("http://localhost:8001/allkomplain");
+        const response = await axios.get("http://localhost:8001/allkomplain", {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        });
         setData(response.data);
         console.log(response.data,'ini data');
         

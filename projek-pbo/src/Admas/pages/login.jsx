@@ -22,7 +22,8 @@ export default function Login() {
           "Content-Type": "application/json",
         },
       });
-      if (response.data) {
+      if (response.data.accessToken) {
+        localStorage.setItem("token", response.data.accessToken);
         localStorage.setItem("email", email);
         setMessage("Berhasil Login!");
         setTimeout(() => {

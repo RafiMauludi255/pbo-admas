@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../style/sidebar.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Home from "../assets/home.png";
 import Complain from "../assets/complain.png";
 import User from "../assets/user.png";
@@ -26,6 +26,12 @@ function Sidebar() {
     };
     fetchData();
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    useNavigate("/");
+  };
+
 
   return (
     <div className="sidebar">
@@ -68,7 +74,7 @@ function Sidebar() {
           </li>
         </Link>
         <Link to="/">
-          <li>
+          <li onClick={handleLogout}>
             <img src={Logout} alt="logout" />
             Keluar
           </li>

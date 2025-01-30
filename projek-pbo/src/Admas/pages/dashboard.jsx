@@ -1,33 +1,43 @@
 import Navbar from "../Components/navbar";
 import Sidebar from "../Components/sidebar";
-import Informasi from "../Components/informasi";
-import Agenda from "../Components/agenda";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { useNavigate } from "react-router-dom";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale);
 
 export default function Dashboard() {
   const [data, setData] = useState([]);
   const [chartData, setChartData] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/");
+    }
+
     AOS.init({
       duration: 1000,
       easing: "ease-in-out",
       once: true,
       mirror: false,
     });
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:8001/allkomplain");
+        const response = await axios.get("http://localhost:8001/allkomplain", {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        });
         setData(response.data);
   
         // Group complaints by date
