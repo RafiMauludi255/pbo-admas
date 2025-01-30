@@ -5,10 +5,7 @@ import "../../style/allkomplain.css";
 import axios from "axios";
 import AOS from "aos";
 import "aos/dist/aos.css";
-<<<<<<< HEAD
 import Swal from "sweetalert2";
-=======
->>>>>>> 4e5baa7572e65b86b9f4189cb824ea2dcf3f30f2
 
 function Allkomplain() {
   const [data, setData] = useState([]);
@@ -44,11 +41,7 @@ function Allkomplain() {
     fetchData();
 
     AOS.init({
-<<<<<<< HEAD
       once: true,
-=======
-      once: true, // Ensures animations occur only once
->>>>>>> 4e5baa7572e65b86b9f4189cb824ea2dcf3f30f2
     });
   }, []);
 
