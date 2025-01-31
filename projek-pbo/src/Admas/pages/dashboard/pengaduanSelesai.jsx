@@ -52,6 +52,7 @@ export default function Alluser() {
                   <th>Lokasi</th>
                   <th>Tanggal Aduan</th>
                   <th>Tanggal Ditanggapi</th>
+                  <th>Tanggal Selesai</th>
                   <th>Status</th>
                   <th>Tanggapan</th>
                 </tr>
@@ -65,8 +66,9 @@ export default function Alluser() {
                       <td>{aduan.lokasi_aduan}</td>
                       <td>{new Date(aduan.tanggal_aduan).toLocaleDateString("id-ID")}</td>
                       <td>{new Date(aduan.tanggal_ditanggapi).toLocaleDateString("id-ID")}</td>
+                      <td>{new Date(aduan.tanggal_selesai).toLocaleDateString("id-ID")}</td>
                       <td>{aduan.status}</td>
-                      <td>{aduan.tanggapan}</td>
+                      <td>{aduan.tanggapan_selesai}</td>
                     </tr>
                   ))
                 ) : (
