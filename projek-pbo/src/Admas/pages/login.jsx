@@ -24,7 +24,7 @@ export default function Login() {
       });
       if (response.data.data.access_token) {
         localStorage.setItem("token", response.data.data.access_token);
-        localStorage.setItem("email", response.data.data.email);
+        localStorage.setItem("email", email);
         setMessage("Berhasil Login!");
         setTimeout(() => {
           navigate("/pages/dashboard");
