@@ -17,9 +17,15 @@ function Sidebar() {
       try {
         const email = localStorage.getItem("email");
         const response = await axios.get(
-          `http://localhost:8001/current-user?email=${email}`
+          `https://daee-2001-448a-2020-7773-887e-cd7d-a7c7-46b2.ngrok-free.app/api/admin/profile-admin?email=${email}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              "ngrok-skip-browser-warning": "true",
+            },
+          }
         );
-        setAccount(response.data);
+        setAccount(response.data.data);
       } catch (error) {
         console.log(error);
       }
@@ -31,7 +37,6 @@ function Sidebar() {
     localStorage.removeItem("token");
     useNavigate("/");
   };
-
 
   return (
     <div className="sidebar">

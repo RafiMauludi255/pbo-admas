@@ -33,7 +33,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:8001/allkomplain", {
+        const response = await axios.get("https://daee-2001-448a-2020-7773-887e-cd7d-a7c7-46b2.ngrok-free.app/api/admin/list-pengaduan/selesai", {
           headers: {
             Authorization: localStorage.getItem("token"),
           },

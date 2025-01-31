@@ -17,18 +17,18 @@ export default function Login() {
     const data = { email, password };
 
     try {
-      const response = await axios.post("http://localhost:8001/login", data, {
+      const response = await axios.post("https://daee-2001-448a-2020-7773-887e-cd7d-a7c7-46b2.ngrok-free.app/api/admin/login-admin", data, {
         headers: {
           "Content-Type": "application/json",
         },
       });
-      if (response.data.accessToken) {
-        localStorage.setItem("token", response.data.accessToken);
-        localStorage.setItem("email", email);
+      if (response.data.data.access_token) {
+        localStorage.setItem("token", response.data.data.access_token);
+        localStorage.setItem("email", response.data.data.email);
         setMessage("Berhasil Login!");
         setTimeout(() => {
           navigate("/pages/dashboard");
-        }, 2000);
+        }, 1000);
       } else {
         setMessage("Gagal Login! Kesalahan Server");
       }

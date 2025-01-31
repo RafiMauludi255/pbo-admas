@@ -1,47 +1,40 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../../Components/navbar";
 import Sidebar from "../../Components/sidebar";
 import "../../style/allkomplain.css";
 
 export default function Alluser() {
-  const [user, setUser] = useState([]);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
-        useNavigate("/");
+        navigate("/");
       }
 
       try {
-        const response = await axios.get("http://localhost:8001/useradmin", {
+        const response = await axios.get("https://daee-2001-448a-2020-7773-887e-cd7d-a7c7-46b2.ngrok-free.app/api/admin/profile-admin", {
           headers: {
-            Authorization: localStorage.getItem("token"),
+            Authorization: `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true",
           },
         });
-        setUser(response.data);
+        console.log("Response dari API:", response.data); 
+        setUser(response.data.data);
       } catch (error) {
         console.log(error);
+        if (error.response) {
+          console.log("Detail error:", error.response.data);
+        }
       }
     };
     fetchUser();
   }, []);
 
-  const deleteData = async (id) => {
-    try {
-      const response = await axios.delete(
-        `http://localhost:8001/deleteadmin/${id}`
-      );
-      // setData("Berhasil menghapus data!");
-      alert("berhasil menghapus data!");
-      setUser(user.filter((item) => item.id !== id));
-    } catch (error) {
-      console.log(error);
-      alert("Gagal menghapus data!");
-    }
-  };
   return (
     <div>
       <Navbar />
@@ -49,30 +42,27 @@ export default function Alluser() {
       <div className="body">
         <div className="hero">
           <h2>User Admin</h2>
-          <div
-            className="container"
-            data-aos="fade-right"
-            data-aos-offset="300"
-            data-aos-easing="ease-in-sine"
-          >
+          <div className="container">
             <table border="1px">
               <thead>
                 <tr>
+                  <th>Nama</th>
                   <th>Email</th>
-                  <th>Password</th>
-                  <th>Aksi</th>
+                  <th>Provinsi</th>
+                  <th>Kota</th>
+                  <th>Aduan Ditanggapi</th>
                 </tr>
               </thead>
               <tbody>
-                {user.map((item) => (
-                  <tr key={item.id}>
-                    <td>{item.email}</td>
-                    <td>{item.password}</td>
-                    <td>
-                      <button onClick={() => deleteData(item.id)}>Hapus</button>
-                    </td>
+                {user && (
+                  <tr>
+                    <td>{user.nama}</td>
+                    <td>{user.email}</td>
+                    <td>{user.provinsi}</td>
+                    <td>{user.kota}</td>
+                    <td>{user.aduan_ditanggapi}</td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
