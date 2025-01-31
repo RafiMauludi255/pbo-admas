@@ -72,6 +72,12 @@ function Sidebar() {
             Lihat User
           </li>
         </Link>
+        <Link to="/pages/dashboard/pengaduanProses">
+          <li>
+            <img src={User} alt="complain" />
+            Pengaduan (Proses)
+          </li>
+        </Link>
         <Link to="/pages/dashboard/register">
           <li>
             <img src={Verify} alt="complain" />
