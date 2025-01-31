@@ -78,6 +78,12 @@ function Sidebar() {
             Pengaduan (Proses)
           </li>
         </Link>
+        <Link to="/pages/dashboard/pengaduanSelesai">
+          <li>
+            <img src={User} alt="complain" />
+            Pengaduan (Selesai)
+          </li>
+        </Link>
         <Link to="/pages/dashboard/register">
           <li>
             <img src={Verify} alt="complain" />

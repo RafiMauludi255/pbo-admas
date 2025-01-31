@@ -5,6 +5,7 @@ import Allkomplain from "./pages/dashboard/allkomplain";
 import Register from "./pages/dashboard/register";
 import Alluser from "./pages/dashboard/alluser";
 import PengaduanProses from "./pages/dashboard/pengaduanProses";
+import PengaduanSelesai from "./pages/dashboard/pengaduanSelesai";
 
 export default function Index() {
   
@@ -17,6 +18,7 @@ export default function Index() {
         <Route path="/pages/dashboard/register" element={<Register />} />
         <Route path="/pages/dashboard/alluser" element={<Alluser />} />
         <Route path="/pages/dashboard/pengaduanProses" element={<PengaduanProses />} />
+        <Route path="/pages/dashboard/pengaduanSelesai" element={<PengaduanSelesai />} />
       </Routes>
     </BrowserRouter>
   );
