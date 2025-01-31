@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../style/sidebar.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import Home from "../assets/home.png";
 import Complain from "../assets/complain.png";
 import User from "../assets/user.png";
@@ -10,31 +10,38 @@ import Logout from "../assets/logout.png";
 import axios from "axios";
 
 function Sidebar() {
-  const [account, setAccount] = useState([]);
+  const [account, setAccount] = useState(() => {
+    const savedAccount = localStorage.getItem("account");
+    return savedAccount ? JSON.parse(savedAccount) : null;
+  });
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const email = localStorage.getItem("email");
-        const response = await axios.get(
-          `https://daee-2001-448a-2020-7773-887e-cd7d-a7c7-46b2.ngrok-free.app/api/admin/profile-admin?email=${email}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-              "ngrok-skip-browser-warning": "true",
-            },
-          }
-        );
-        setAccount(response.data.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, []);
+    if (account) {
+      const fetchData = async () => {
+        try {
+          const email = localStorage.getItem("email");
+          const response = await axios.get(
+            `https://daee-2001-448a-2020-7773-887e-cd7d-a7c7-46b2.ngrok-free.app/api/admin/profile-admin?email=${email}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                "ngrok-skip-browser-warning": "true",
+              },
+            }
+          );
+          setAccount(response.data.data);
+          localStorage.setItem("account", JSON.stringify(response.data.data)); // Simpan data akun
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      fetchData();
+    }
+  }, [account]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("account"); // Hapus data akun dari localStorage
     useNavigate("/");
   };
 

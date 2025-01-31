@@ -7,6 +7,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../../const";
 
 function Allkomplain() {
   const [data, setData] = useState([]);
@@ -31,17 +32,20 @@ function Allkomplain() {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
-        useNavigate("/")
+        useNavigate("/");
       }
       try {
-        const response = await axios.get("http://localhost:8001/allkomplain", {
-          headers: {
-            Authorization: localStorage.getItem("token"),
-          },
-        });
-        setData(response.data);
-        console.log(response.data,'ini data');
-        
+        const response = await axios.get(
+          `${API_URL}/admin/list-pengaduan/menunggu-tanggapan`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "ngrok-skip-browser-warning": "true",
+            },
+          }
+        );
+        setData(response.data.data);
+        // console.log(response.data,'ini data');
       } catch (error) {
         console.log(error);
       }
@@ -89,34 +93,36 @@ function Allkomplain() {
               <thead>
                 <tr>
                   <th>Nama</th>
-                  <th>Usia</th>
-                  <th>Provinsi</th>
-                  <th>Kota</th>
-                  <th>Desa</th>
-                  <th>Profesi</th>
-                  <th>Komplain</th>
-                  <th>Waktu</th>
-                  <th>Aksi</th>
+                  <th>Deskripsi</th>
+                  <th>Lokasi</th>
+                  <th>Tanggal</th>
+                  <th>Status</th>
+                  <th>Tanggapan</th>
+                  {/* <th>Tanggal Ditanggapi</th> */}
+                  {/* <th>Tanggapan Selesai</th> */}
+                  {/* <th>Tanggal Selesai</th> */}
                 </tr>
               </thead>
               <tbody>
                 {data.map((item) => (
-                  <tr key={item.nama}>
-                    <td>{item.nama}</td>
-                    <td>{item.usia}</td>
-                    <td>{item.provinsi}</td>
-                    <td>{item.kota}</td>
-                    <td>{item.desa}</td>
-                    <td>{item.profesi}</td>
-                    <td>{item.komplain}</td>
+                  <tr key={item.id_pengaduan}>
+                    <td>{item.nama_user}</td>
+                    <td>{item.deskripsi_aduan}</td>
+                    <td>{item.lokasi_aduan}</td>
                     <td>
-                      <FormatWaktu waktu={item.create_date} />
+                      <FormatWaktu waktu={item.tanggal_aduan} />
                     </td>
+                    <td>{item.status}</td>
                     <td>
                       <button onClick={() => deleteData(item.nama)}>
                         Selesai
                       </button>
                     </td>
+                    {/* <td>
+                      <FormatWaktu waktu={item.tanggal_ditanggapi} />
+                    </td> */}
+                    {/* <td>{item.tanggapan_selesai}</td> */}
+                    {/* <td>{item.tanggal_selesai}</td> */}
                   </tr>
                 ))}
               </tbody>

@@ -4,9 +4,15 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { Chart as ChartJS, BarElement, CategoryScale, LinearScale } from "chart.js";
+import {
+  Chart as ChartJS,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+} from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../const";
 
 ChartJS.register(BarElement, CategoryScale, LinearScale);
 
@@ -14,10 +20,9 @@ export default function Dashboard() {
   const [data, setData] = useState([]);
   const [chartData, setChartData] = useState({});
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-
-    const token = localStorage.getItem("token");
     if (!token) {
       navigate("/");
     }
@@ -31,40 +36,29 @@ export default function Dashboard() {
   }, [navigate]);
 
   useEffect(() => {
+    // const token = localStorage.getItem("token");
+
     const fetchData = async () => {
       try {
-        const response = await axios.get("https://daee-2001-448a-2020-7773-887e-cd7d-a7c7-46b2.ngrok-free.app/api/admin/list-pengaduan/selesai", {
+        const response = await axios.get(`${API_URL}/admin/aduan/chart-data`, {
           headers: {
-            Authorization: localStorage.getItem("token"),
+            Authorization: `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true",
           },
         });
-        setData(response.data);
-  
-        // Group complaints by date
-        const groupedData = response.data.reduce((acc, item) => {
-          const date = item.create_date.split("T")[0]; // Extract YYYY-MM-DD
-          const [year, month, day] = date.split("-"); // Split into [year, month, day]
-          const formattedDate = `${day}-${month}-${year}`; // Convert to DD-MM-YYYY
-          acc[formattedDate] = (acc[formattedDate] || 0) + 1;
-          return acc;
-        }, {});
-  
-        // Sort the dates in ascending order
-        const sortedLabels = Object.keys(groupedData).sort((a, b) => {
-          const [dayA, monthA, yearA] = a.split("-").map(num => parseInt(num, 10));
-          const [dayB, monthB, yearB] = b.split("-").map(num => parseInt(num, 10));
-          return new Date(yearA, monthA - 1, dayA) - new Date(yearB, monthB - 1, dayB);
-        });
-  
-        const sortedData = sortedLabels.map(date => groupedData[date]);
-  
-        // Prepare data for the chart
+
+        const rawData = response.data.data;
+        setData(response.data.data);
         setChartData({
-          labels: sortedLabels, // Sorted Dates
+          labels: ["Selesai", "Proses", "Menunggu Tanggapan"], // Sorted Dates
           datasets: [
             {
-              label: "Complaints Per Date",
-              data: sortedData, // Sorted Counts
+              label: "Jumlah Aduan",
+              data: [
+                rawData.selesai,
+                rawData.proses,
+                rawData.menunggu_tanggapan,
+              ], // Sorted Counts
               backgroundColor: "rgba(75, 192, 192, 0.6)",
               borderColor: "rgba(75, 192, 192, 1)",
               borderWidth: 1,
@@ -75,11 +69,9 @@ export default function Dashboard() {
         console.error("Error fetching data:", error);
       }
     };
-  
+
     fetchData();
   }, []);
-  
-  
 
   return (
     <div>
@@ -96,7 +88,9 @@ export default function Dashboard() {
             data-aos-offset="300"
             data-aos-easing="ease-in-sine"
           >
-            <h3 style={{ paddingBottom: "20px" }}>Statistik Komplain Per Tanggal</h3>
+            <h3 style={{ paddingBottom: "20px" }}>
+              Statistik Komplain Per Tanggal
+            </h3>
 
             {chartData.labels ? (
               <Bar

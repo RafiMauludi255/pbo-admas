@@ -3,6 +3,7 @@ import "../style/login.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { API_URL } from "../const";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -17,14 +18,15 @@ export default function Login() {
     const data = { email, password };
 
     try {
-      const response = await axios.post("https://daee-2001-448a-2020-7773-887e-cd7d-a7c7-46b2.ngrok-free.app/api/admin/login-admin", data, {
+      const response = await axios.post(`${API_URL}/admin/login-admin`, data, {
         headers: {
           "Content-Type": "application/json",
         },
       });
       if (response.data.data.access_token) {
         localStorage.setItem("token", response.data.data.access_token);
-        localStorage.setItem("email", email);
+        localStorage.setItem("email", response.data.data.email);
+        localStorage.setItem("account", JSON.stringify(response.data.data)); // Simpan data akun
         setMessage("Berhasil Login!");
         setTimeout(() => {
           navigate("/pages/dashboard");

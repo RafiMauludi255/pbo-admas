@@ -58,7 +58,11 @@ export default function Alluser() {
       );
       setShowModal(false);
       setTanggapan("");
-      setUser(user.filter((aduan) => aduan.id_pengaduan !== selectedAduan.id_pengaduan));
+      setUser(
+        user.filter(
+          (aduan) => aduan.id_pengaduan !== selectedAduan.id_pengaduan
+        )
+      );
     } catch (error) {
       console.error("Error submitting response:", error);
     }
@@ -91,7 +95,11 @@ export default function Alluser() {
                       <td>{aduan.nama_user}</td>
                       <td>{aduan.deskripsi_aduan}</td>
                       <td>{aduan.lokasi_aduan}</td>
-                      <td>{new Date(aduan.tanggal_aduan).toLocaleDateString("id-ID")}</td>
+                      <td>
+                        {new Date(aduan.tanggal_aduan).toLocaleDateString(
+                          "id-ID"
+                        )}
+                      </td>
                       <td>{aduan.status}</td>
                       <td>{aduan.tanggapan || "Belum ditanggapi"}</td>
                       <td>
