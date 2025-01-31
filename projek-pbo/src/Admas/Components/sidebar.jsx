@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../style/sidebar.css";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Home from "../assets/home.png";
 import Complain from "../assets/complain.png";
 import User from "../assets/user.png";
@@ -8,6 +8,7 @@ import Verify from "../assets/verify.png";
 import Admin from "../assets/male.png";
 import Logout from "../assets/logout.png";
 import axios from "axios";
+import { API_URL } from "../const";
 
 function Sidebar() {
   const [account, setAccount] = useState(() => {
@@ -21,7 +22,7 @@ function Sidebar() {
         try {
           const email = localStorage.getItem("email");
           const response = await axios.get(
-            `https://daee-2001-448a-2020-7773-887e-cd7d-a7c7-46b2.ngrok-free.app/api/admin/profile-admin?email=${email}`,
+            `${API_URL}/admin/profile-admin?email=${email}`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -89,12 +90,6 @@ function Sidebar() {
           <li>
             <img src={User} alt="complain" />
             Pengaduan (Selesai)
-          </li>
-        </Link>
-        <Link to="/pages/dashboard/register">
-          <li>
-            <img src={Verify} alt="complain" />
-            Register
           </li>
         </Link>
         <Link to="/">

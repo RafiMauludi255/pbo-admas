@@ -36,8 +36,6 @@ export default function Dashboard() {
   }, [navigate]);
 
   useEffect(() => {
-    // const token = localStorage.getItem("token");
-
     const fetchData = async () => {
       try {
         const response = await axios.get(`${API_URL}/admin/aduan/chart-data`, {

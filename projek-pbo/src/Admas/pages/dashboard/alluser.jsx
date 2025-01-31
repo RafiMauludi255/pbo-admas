@@ -4,10 +4,12 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../../Components/navbar";
 import Sidebar from "../../Components/sidebar";
 import "../../style/allkomplain.css";
+import { API_URL } from "../../const";
 
 export default function Alluser() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -17,16 +19,17 @@ export default function Alluser() {
       }
 
       try {
-        const response = await axios.get("https://daee-2001-448a-2020-7773-887e-cd7d-a7c7-46b2.ngrok-free.app/api/admin/profile-admin", {
+        const response = await axios.get(`${API_URL}/admin/profile-admin`, {
           headers: {
             Authorization: `Bearer ${token}`,
             "ngrok-skip-browser-warning": "true",
           },
         });
-        console.log("Response dari API:", response.data); 
         setUser(response.data.data);
+        setLoading(false);
       } catch (error) {
         console.log(error);
+        setLoading(false);
         if (error.response) {
           console.log("Detail error:", error.response.data);
         }
@@ -54,14 +57,20 @@ export default function Alluser() {
                 </tr>
               </thead>
               <tbody>
-                {user && (
+                {loading ? (
                   <tr>
-                    <td>{user.nama}</td>
-                    <td>{user.email}</td>
-                    <td>{user.provinsi}</td>
-                    <td>{user.kota}</td>
-                    <td>{user.aduan_ditanggapi}</td>
+                    <td colSpan="6">Loading ...</td>
                   </tr>
+                ) : (
+                  user && (
+                    <tr>
+                      <td>{user.nama}</td>
+                      <td>{user.email}</td>
+                      <td>{user.provinsi}</td>
+                      <td>{user.kota}</td>
+                      <td>{user.aduan_ditanggapi}</td>
+                    </tr>
+                  )
                 )}
               </tbody>
             </table>

@@ -11,6 +11,7 @@ import { API_URL } from "../../const";
 
 function Allkomplain() {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   function NotifSukses() {
     Swal.fire({
@@ -45,9 +46,10 @@ function Allkomplain() {
           }
         );
         setData(response.data.data);
-        // console.log(response.data,'ini data');
+        setLoading(false);
       } catch (error) {
         console.log(error);
+        setLoading(false);
       }
     };
 
@@ -98,33 +100,31 @@ function Allkomplain() {
                   <th>Tanggal</th>
                   <th>Status</th>
                   <th>Tanggapan</th>
-                  {/* <th>Tanggal Ditanggapi</th> */}
-                  {/* <th>Tanggapan Selesai</th> */}
-                  {/* <th>Tanggal Selesai</th> */}
                 </tr>
               </thead>
               <tbody>
-                {data.map((item) => (
-                  <tr key={item.id_pengaduan}>
-                    <td>{item.nama_user}</td>
-                    <td>{item.deskripsi_aduan}</td>
-                    <td>{item.lokasi_aduan}</td>
-                    <td>
-                      <FormatWaktu waktu={item.tanggal_aduan} />
-                    </td>
-                    <td>{item.status}</td>
-                    <td>
-                      <button onClick={() => deleteData(item.nama)}>
-                        Selesai
-                      </button>
-                    </td>
-                    {/* <td>
-                      <FormatWaktu waktu={item.tanggal_ditanggapi} />
-                    </td> */}
-                    {/* <td>{item.tanggapan_selesai}</td> */}
-                    {/* <td>{item.tanggal_selesai}</td> */}
+                {loading ? (
+                  <tr>
+                    <td colSpan="6">Loading...</td>
                   </tr>
-                ))}
+                ) : (
+                  data.map((item) => (
+                    <tr key={item.id_pengaduan}>
+                      <td>{item.nama_user}</td>
+                      <td>{item.deskripsi_aduan}</td>
+                      <td>{item.lokasi_aduan}</td>
+                      <td>
+                        <FormatWaktu waktu={item.tanggal_aduan} />
+                      </td>
+                      <td>{item.status}</td>
+                      <td>
+                        <button onClick={() => deleteData(item.nama)}>
+                          Selesai
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
