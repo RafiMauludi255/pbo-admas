@@ -5,6 +5,8 @@ import Navbar from "../../Components/navbar";
 import Sidebar from "../../Components/sidebar";
 import "../../style/allkomplain.css";
 import { API_URL } from "../../const";
+import Swal from "sweetalert2";
+
 
 export default function Alluser() {
   const [user, setUser] = useState([]);
@@ -12,6 +14,14 @@ export default function Alluser() {
   const [tanggapan, setTanggapan] = useState("");
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
+
+   function NotifSukses() {
+      Swal.fire({
+        title: "Komplain Selesai!",
+        icon: "success",
+        draggable: true,
+      });
+    }
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -45,7 +55,7 @@ export default function Alluser() {
     const token = localStorage.getItem("token");
     try {
       await axios.post(
-        "https://daee-2001-448a-2020-7773-887e-cd7d-a7c7-46b2.ngrok-free.app/api/admin/selesaikan-pengaduan",
+        `${API_URL}/admin/selesaikan-pengaduan`,
         {
           id_pengaduan: selectedAduan.id_pengaduan,
           tanggapan,
@@ -59,6 +69,7 @@ export default function Alluser() {
       );
       setShowModal(false);
       setTanggapan("");
+      NotifSukses();
       setUser(
         user.filter(
           (aduan) => aduan.id_pengaduan !== selectedAduan.id_pengaduan

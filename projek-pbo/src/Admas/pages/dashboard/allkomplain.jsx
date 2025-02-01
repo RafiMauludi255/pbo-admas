@@ -10,8 +10,9 @@ import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../const";
 
 function Allkomplain() {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState([]); // Pastikan default adalah array
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate(); // Perbaikan: Gunakan navigate sebagai fungsi
 
   function NotifSukses() {
     Swal.fire({
@@ -25,7 +26,7 @@ function Allkomplain() {
     Swal.fire({
       icon: "error",
       title: "Gagal!",
-      text: "Gagal menghapus data!",
+      text: "Gagal mengubah status komplain!",
     });
   }
 
@@ -33,7 +34,8 @@ function Allkomplain() {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
-        useNavigate("/");
+        navigate("/"); // Perbaikan: Gunakan navigate
+        return;
       }
       try {
         const response = await axios.get(
@@ -45,7 +47,7 @@ function Allkomplain() {
             },
           }
         );
-        setData(response.data.data);
+        setData(response.data.data || []); // Pastikan data selalu array
         setLoading(false);
       } catch (error) {
         console.log(error);
@@ -58,15 +60,33 @@ function Allkomplain() {
     AOS.init({
       once: true,
     });
-  }, []);
+  }, [navigate]);
 
-  const deleteData = async (nama) => {
+  const prosesKomplain = async (id_pengaduan) => {
+    const token = localStorage.getItem("token");
     try {
-      const response = await axios.delete(
-        `http://localhost:8001/clearkomplain/${nama}`
+      await axios.post(
+        `${API_URL}/admin/tanggapi-pengaduan`,
+        {
+          tanggapan: "Komplain telah selesai",
+          id_pengaduan: id_pengaduan,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true",
+            "Content-Type": "application/json",
+          },
+        }
       );
       NotifSukses();
-      setData(data.filter((item) => item.nama !== nama));
+
+      // Perbaikan: Pastikan setData mengembalikan array baru yang diperbarui
+      setData((prevData) =>
+        prevData.map((item) =>
+          item.id_pengaduan === id_pengaduan ? { ...item, status: "Diproses" } : item
+        )
+      );
     } catch (error) {
       console.log(error);
       NotifGagal();
@@ -78,6 +98,7 @@ function Allkomplain() {
     const formatWaktu = new Date(waktu).toLocaleDateString("id-ID");
     return <span>{formatWaktu}</span>;
   }
+
   return (
     <div>
       <Navbar />
@@ -107,7 +128,7 @@ function Allkomplain() {
                   <tr>
                     <td colSpan="6">Loading...</td>
                   </tr>
-                ) : (
+                ) : data.length > 0 ? ( // Pastikan data tidak kosong sebelum map
                   data.map((item) => (
                     <tr key={item.id_pengaduan}>
                       <td>{item.nama_user}</td>
@@ -118,12 +139,16 @@ function Allkomplain() {
                       </td>
                       <td>{item.status}</td>
                       <td>
-                        <button onClick={() => deleteData(item.nama)}>
-                          Selesai
+                        <button onClick={() => prosesKomplain(item.id_pengaduan)}>
+                          Proses
                         </button>
                       </td>
                     </tr>
                   ))
+                ) : (
+                  <tr>
+                    <td colSpan="6">Tidak ada data tersedia</td>
+                  </tr>
                 )}
               </tbody>
             </table>
