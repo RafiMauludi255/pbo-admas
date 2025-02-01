@@ -17,28 +17,30 @@ function Sidebar() {
   });
 
   useEffect(() => {
-    if (account) {
-      const fetchData = async () => {
-        try {
-          const email = localStorage.getItem("email");
-          const response = await axios.get(
-            `${API_URL}/admin/profile-admin?email=${email}`,
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-                "ngrok-skip-browser-warning": "true",
-              },
-            }
-          );
-          setAccount(response.data.data);
-          localStorage.setItem("account", JSON.stringify(response.data.data)); // Simpan data akun
-        } catch (error) {
-          console.log(error);
-        }
-      };
-      fetchData();
-    }
-  }, [account]);
+    const fetchData = async () => {
+      try {
+        const email = localStorage.getItem("email");
+        if (!email) return;
+  
+        const response = await axios.get(
+          `${API_URL}/admin/profile-admin?email=${email}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              "ngrok-skip-browser-warning": "true",
+            },
+          }
+        );
+        setAccount(response.data.data);
+        localStorage.setItem("account", JSON.stringify(response.data.data));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+  
+    fetchData();
+  }, []);
+  
 
   const handleLogout = () => {
     localStorage.removeItem("token");
