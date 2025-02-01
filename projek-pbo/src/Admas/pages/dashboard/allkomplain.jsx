@@ -3,16 +3,17 @@ import Navbar from "../../Components/navbar";
 import Sidebar from "../../Components/sidebar";
 import "../../style/allkomplain.css";
 import axios from "axios";
-import AOS from "aos";
-import "aos/dist/aos.css";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../const";
 
 function Allkomplain() {
-  const [data, setData] = useState([]); // Pastikan default adalah array
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate(); // Perbaikan: Gunakan navigate sebagai fungsi
+  const [selectedAduan, setSelectedAduan] = useState(null);
+  const [tanggapan, setTanggapan] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
   function NotifSukses() {
     Swal.fire({
@@ -34,20 +35,17 @@ function Allkomplain() {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
-        navigate("/"); // Perbaikan: Gunakan navigate
+        navigate("/");
         return;
       }
       try {
-        const response = await axios.get(
-          `${API_URL}/admin/list-pengaduan/menunggu-tanggapan`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "ngrok-skip-browser-warning": "true",
-            },
-          }
-        );
-        setData(response.data.data || []); // Pastikan data selalu array
+        const response = await axios.get(`${API_URL}/admin/list-pengaduan/menunggu-tanggapan`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "ngrok-skip-browser-warning": "true",
+          },
+        });
+        setData(response.data.data || []);
         setLoading(false);
       } catch (error) {
         console.log(error);
@@ -56,48 +54,35 @@ function Allkomplain() {
     };
 
     fetchData();
-
-    AOS.init({
-      once: true,
-    });
   }, [navigate]);
 
-  const prosesKomplain = async (id_pengaduan) => {
+  const handleTanggapanSubmit = async () => {
+    if (!selectedAduan) return;
+
     const token = localStorage.getItem("token");
     try {
-      await axios.post(
-        `${API_URL}/admin/tanggapi-pengaduan`,
-        {
-          tanggapan: "Komplain telah selesai",
-          id_pengaduan: id_pengaduan,
+      await axios.post(`${API_URL}/admin/tanggapi-pengaduan`, {
+        id_pengaduan: selectedAduan.id_pengaduan,
+        tanggapan,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "ngrok-skip-browser-warning": "true",
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      });
+
+      setShowModal(false);
+      setTanggapan("");
       NotifSukses();
 
-      // Perbaikan: Pastikan setData mengembalikan array baru yang diperbarui
-      setData((prevData) =>
-        prevData.map((item) =>
-          item.id_pengaduan === id_pengaduan ? { ...item, status: "Diproses" } : item
-        )
-      );
+      setData(prevData => prevData.map(item =>
+        item.id_pengaduan === selectedAduan.id_pengaduan ? { ...item, status: "Diproses", tanggapan } : item
+      ));
     } catch (error) {
       console.log(error);
       NotifGagal();
     }
   };
-
-  // Format waktu
-  function FormatWaktu({ waktu }) {
-    const formatWaktu = new Date(waktu).toLocaleDateString("id-ID");
-    return <span>{formatWaktu}</span>;
-  }
 
   return (
     <div>
@@ -106,12 +91,7 @@ function Allkomplain() {
       <div className="body">
         <div className="hero">
           <h2>Komplain</h2>
-          <div
-            className="container"
-            data-aos="fade-right"
-            data-aos-offset="300"
-            data-aos-easing="ease-in-sine"
-          >
+          <div className="container">
             <table border="1px">
               <thead>
                 <tr>
@@ -120,7 +100,7 @@ function Allkomplain() {
                   <th>Lokasi</th>
                   <th>Tanggal</th>
                   <th>Status</th>
-                  <th>Tanggapan</th>
+                  <th>Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -128,18 +108,21 @@ function Allkomplain() {
                   <tr>
                     <td colSpan="6">Loading...</td>
                   </tr>
-                ) : data.length > 0 ? ( // Pastikan data tidak kosong sebelum map
+                ) : data.length > 0 ? (
                   data.map((item) => (
                     <tr key={item.id_pengaduan}>
                       <td>{item.nama_user}</td>
                       <td>{item.deskripsi_aduan}</td>
                       <td>{item.lokasi_aduan}</td>
-                      <td>
-                        <FormatWaktu waktu={item.tanggal_aduan} />
-                      </td>
+                      <td>{new Date(item.tanggal_aduan).toLocaleDateString("id-ID")}</td>
                       <td>{item.status}</td>
                       <td>
-                        <button onClick={() => prosesKomplain(item.id_pengaduan)}>
+                        <button
+                          onClick={() => {
+                            setSelectedAduan(item);
+                            setShowModal(true);
+                          }}
+                        >
                           Proses
                         </button>
                       </td>
@@ -155,6 +138,22 @@ function Allkomplain() {
           </div>
         </div>
       </div>
+
+      {showModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <h3>Tanggapi Komplain</h3>
+            <p>{selectedAduan?.deskripsi_aduan}</p>
+            <textarea
+              value={tanggapan}
+              onChange={(e) => setTanggapan(e.target.value)}
+              placeholder="Masukkan tanggapan"
+            ></textarea>
+            <button onClick={handleTanggapanSubmit}>Kirim</button>
+            <button onClick={() => setShowModal(false)}>Batal</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
