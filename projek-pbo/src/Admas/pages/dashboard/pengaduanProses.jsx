@@ -14,6 +14,7 @@ export default function Alluser() {
   const [tanggapan, setTanggapan] = useState("");
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
    function NotifSukses() {
       Swal.fire({
@@ -42,8 +43,10 @@ export default function Alluser() {
           }
         );
         setUser(response.data.data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setLoading(false);
       }
     };
     fetchUser();
@@ -128,7 +131,7 @@ export default function Alluser() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="6">Tidak ada data</td>
+                    <td colSpan="6">Loading ...</td>
                   </tr>
                 )}
               </tbody>
