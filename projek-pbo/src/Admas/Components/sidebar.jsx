@@ -91,7 +91,13 @@ function Sidebar() {
         <Link to="/pages/dashboard/alluser">
           <li>
             <img src={User} alt="complain" />
-            Lihat User
+            Profile Admin
+          </li>
+        </Link>
+        <Link to="/pages/dashboard/userkomplain">
+          <li>
+            <img src={User} alt="complain" />
+            Profile Komplain
           </li>
         </Link>
         <Link to="/">
